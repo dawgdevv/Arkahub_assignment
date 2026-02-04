@@ -8,6 +8,23 @@ This is the mock backend server and client for the EnergyGrid Data Aggregator co
 - npm (Node Package Manager)
 - Go(1.22+)
 
+## Security Headers Implemenation
+
+```bash
+In -->Signature.go
+
+func GenerateSignature(url, token, timestamp string) string {
+	data := url + token + timestamp
+	hash := md5.Sum([]byte(data))
+	return hex.EncodeToString(hash[:])
+}
+
+In -->client.go
+
+timestamp := strconv.FormatInt(time.Now().UnixMilli(), 10)
+signature := auth.GenerateSignature("/device/real/query", config.Token, timestamp)
+```
+
 ## Client folder structure and modules:
 
 1. main.go: Entry point; runs fetch, aggregation, and export.
