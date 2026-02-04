@@ -33,6 +33,12 @@ Reason for this approach: the API enforces a strict global 1 req/sec limit, so a
 
 ## Setup and Run The Mock API Server and Client
 
+```bash
+git clone <repo_url>
+
+cd Arkahub_assignment
+```
+
 ### Terminal 1: Start Mock API Server
 
 ```bash
