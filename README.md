@@ -8,6 +8,18 @@ This is the mock backend server and client for the EnergyGrid Data Aggregator co
 - npm (Node Package Manager)
 - Go(1.22+)
 
+## Client folder structure and modules:
+
+1. main.go: Entry point; runs fetch, aggregation, and export.
+
+2. config/config.go: Constants for API URL, token, batch size, total devices.
+3. auth/signature.go: GenerateSignature() MD5 signing.
+4. cleint/client.go: HTTP client, rate limiting, batching loop, retries.
+5. utils/serialnumbers.go: Serial number generation and batching helpers.
+6. models/types.go: Request/response models and device data types.
+7. aggregator/aggregator.go: Aggregation stats output.
+8. export/export.go: JSON + report export.
+
 ## Brief explanation of my approach (how I handled rate limiting and concurrency).
 
 1. Rate limiting: fetchBatch() enforces a minimum 1‑second gap between requests by tracking lastReqTime and sleeping when needed, so only one request is in flight at a time.
