@@ -15,7 +15,7 @@ func GenerateSerialNumbers() []string {
 	return sns
 }
 
-// BatchSerialNumbers splits SNs into batches of 10
+// batch serial number
 func BatchSerialNumbers(sns []string) [][]string {
 	var batches [][]string
 
