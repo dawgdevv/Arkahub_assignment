@@ -24,9 +24,9 @@ This is the mock backend server and client for the EnergyGrid Data Aggregator co
 
 1. Rate limiting: fetchBatch() enforces a minimum 1‑second gap between requests by tracking lastReqTime and sleeping when needed, so only one request is in flight at a time.
 
-2. Concurrency: there is no parallelism by design; batches are processed sequentially in FetchAllDevices(), which keeps concurrency at 1 and guarantees compliance with the strict 1 req/s limit.
+2. Concurrency: there is no parallelism by design batches are processed sequentially in FetchAllDevices(), which keeps concurrency at 1 and guarantees compliance with the strict 1 req/s limit.
 
-Reason for this approach: the API enforces a strict global 1 req/sec limit, so a simple sequential pipeline maximizes compliance and avoids 429s without extra complexity.
+Reason for this approach: the API enforces a strict global 1 req/sec limit, so a simple sequential pipeline maximizes compliance with limitations and avoids 429s without extra complexity.
 
 ## Alternative handling options and when to use them
 
@@ -70,6 +70,21 @@ The server is now listening at `http://localhost:3000`.
 ```bash
 cd clientingo
 go run main.go
+```
+
+## How to test HTTP 429
+
+Send two requests back-to-back (the second should return 429):
+
+```bash
+ts=$(date +%s%3N); sig=$(printf "/device/real/queryinterview_token_123%s" "$ts" | md5sum | awk '{print $1}'); \
+curl -s -o /dev/null -w "First: %{http_code}\n" -X POST "http://localhost:3000/device/real/query" \
+  -H "content-type: application/json" -H "timestamp: $ts" -H "signature: $sig" \
+  -d '{"sn_list":["SN-000"]}'; \
+ts=$(date +%s%3N); sig=$(printf "/device/real/queryinterview_token_123%s" "$ts" | md5sum | awk '{print $1}'); \
+curl -s -o /dev/null -w "Second: %{http_code}\n" -X POST "http://localhost:3000/device/real/query" \
+  -H "content-type: application/json" -H "timestamp: $ts" -H "signature: $sig" \
+  -d '{"sn_list":["SN-001"]}'
 ```
 
 ### Output
